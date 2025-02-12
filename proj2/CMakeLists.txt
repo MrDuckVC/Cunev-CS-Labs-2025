@@ -8,8 +8,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(${project}_SOURCES
         main.cpp)
 
-add_subdirectory(mymath)
-add_subdirectory(myalphabet)
+set(${project}_HEADERS
+        mymath.h, myalphabet.h)
 
 set(${project}_SOURCE_LIST
         ${${project}_SOURCES})
@@ -17,5 +17,5 @@ set(${project}_SOURCE_LIST
 add_executable(${project}
         ${${project}_SOURCE_LIST})
 
-target_link_libraries(${project} mymath.a)
-target_link_libraries(${project} myalphabet.a)
+target_link_libraries(${project} ${CMAKE_SOURCE_DIR}/libmymath.a)
+target_link_libraries(${project} ${CMAKE_SOURCE_DIR}/libmyalphabet.a)
