@@ -11,7 +11,7 @@ void Planet::setName(char *newName) { delete[] name_; name_ = new char[strlen(ne
 void Planet::setLife(bool newLife) { life_ = newLife; }
 void Planet::setDiameter(int newDiameter) { diameter_ = newDiameter; }
 void Planet::setSatellitesNum(int newSatellitesNum) { satellitesNum_ = newSatellitesNum; }
-char *Planet::getName() { return name_; }
+char* Planet::getName() { return name_; }
 bool Planet::getLife() { return life_; }
 int Planet::getDiameter() { return diameter_; }
 int Planet::getSatellitesNum() { return satellitesNum_; }
@@ -22,7 +22,10 @@ bool Planet::operator<(Planet &p) { return (diameter_ < p.diameter_); }
 bool Planet::operator>(Planet &p) { return (diameter_ > p.diameter_); }
 
 std::ostream &operator<<(std::ostream &out, Planet p) {
-    out << (&p)->getName() << "\t" << (&p)->getDiameter() << "\t" << (&p)->getLife() << "\t" << (&p)->getSatellitesNum() << "\n\r";
+    std::cout << "p.getDiameter()" << std::endl;
+    std::cout << p.getName() << std::endl;
+    out << p.getName() << "\t" << p.getDiameter() << "\t" << p.getLife() << "\t" << p.getSatellitesNum();
+    std::cout << "p.getDiameter()" << std::endl;
     return out;
 }
 std::ofstream &operator<<(std::ofstream &out, Planet p) {
@@ -30,27 +33,18 @@ std::ofstream &operator<<(std::ofstream &out, Planet p) {
     return out;
 }
 std::ifstream &operator>>(std::ifstream &in, Planet p) {
-    char buf[50];
-    while (in.getline(buf, 50) || !in.eof()) {
-        std::cout << buf << std::endl;
-        // get from buf
-        char *name = new char[20];
-        int diameter, life, satellitesNum;
-        sscanf(buf, "%s %d %d %d", name, &diameter, &life, &satellitesNum);
-        p.setName(name);
-        p.setDiameter(diameter);
-        p.setLife(life);
-        p.setSatellitesNum(satellitesNum);
+    char buf[128];
+    in.getline(buf, 128);
+    char *name = new char[20];
+    int diameter, life, satellitesNum;
+    sscanf(buf, "%s\t%d\t%d\t%d\n", name, &diameter, &life, &satellitesNum);
+    // in >> name >> diameter >> life >> satellitesNum >> std::ws;
+    p.setName(name);
+    p.setDiameter(diameter);
+    p.setLife(life);
+    p.setSatellitesNum(satellitesNum);
 
-        in.clear();
-    }
-    // cha r *name;
-    // int diameter, life, satellitesNum;
-    // in >> name >> diameter >> life >> satellitesNum;
-    // (&p)->setName(name);
-    // (&p)->setDiameter(diameter);
-    // (&p)->setLife(life);
-    // (&p)->setSatellitesNum(satellitesNum);
+    delete[] name;
     return in;
 }
 
@@ -62,23 +56,20 @@ int read_db(char *dbFileName, planet::Planet *planets, const int size) {
     }
 
     int n_planet = 0;
+    Planet inputPlanets[size];
     while (!fin.eof() && n_planet < size) {
-        Planet *newPlanets = new Planet[n_planet + 1];
-        if (n_planet > 0) {
-            for (int i = 0; i < n_planet; i++) {
-                std::cout << "i = " << i << std::endl;
-                newPlanets[i] = planets[i];
-            }
-        }
-        delete[] planets;
-        planets = newPlanets;
-
-        std::cout << "n_planet = " << n_planet << std::endl;
-        Planet p = Planet();
-        std::cout << "n_planet = " << n_planet << std::endl;
-        fin >> p;
+        fin >> inputPlanets[n_planet];
+        std::cout << inputPlanets[n_planet].getName() << std::endl;
         n_planet++;
     }
+
+    Planet *newPlanets = new Planet[n_planet + 1];
+    for (int i = 0; i < n_planet; i++) {
+        newPlanets[i] = inputPlanets[i];
+    }
+
+    delete[] planets;
+    planets = newPlanets;
 
     fin.close();
     return n_planet;
@@ -100,8 +91,9 @@ int menu() {
 void print_db(planet::Planet *planets, int n_planet) {
     std::cout << "Планеты:" << std::endl;
     std::cout << "Название\tДиаметр\tЖивет\tКол-во сателитов" << std::endl;
-    for (int i = 0; i < n_planet; i++)
-        std::cout << planets[i];
+    for (int i = 0; i < n_planet; i++) {
+        std::cout << planets[i] << std::endl;
+    }
     std::cout << std::endl;
 
 };

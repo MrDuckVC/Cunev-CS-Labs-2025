@@ -26,7 +26,7 @@ public:
     bool operator>(Planet &);
 
 private:
-    char *name_;
+    char* name_;
     int diameter_;
     bool life_;
     int satellitesNum_;
