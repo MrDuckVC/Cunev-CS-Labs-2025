@@ -1,21 +1,18 @@
 cmake_minimum_required(VERSION 3.23)
 
-set(project "lab1")
+set(project "lab2")
 project(${project})
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(${project}_SOURCES
-        main.cpp)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sunsys.txt ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
-add_subdirectory(mymath)
-add_subdirectory(myalphabet)
+set(${project}_SOURCES main.cpp)
 
-set(${project}_SOURCE_LIST
-        ${${project}_SOURCES})
+add_subdirectory(planet)
 
-add_executable(${project}
-        ${${project}_SOURCE_LIST})
+set(${project}_SOURCE_LIST ${${project}_SOURCES})
 
-target_link_libraries(${project} mymath.a)
-target_link_libraries(${project} myalphabet.a)
+add_executable(${project} ${${project}_SOURCE_LIST})
+
+target_link_libraries(${project} planet)

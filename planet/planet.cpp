@@ -15,70 +15,140 @@ char *Planet::getName() { return name_; }
 bool Planet::getLife() { return life_; }
 int Planet::getDiameter() { return diameter_; }
 int Planet::getSatellitesNum() { return satellitesNum_; }
+void Planet::edit() {}
 
-const bool &Planet::operator==(const Planet &p) { return (diameter_ == p.diameter_); }
-const bool &Planet::operator<(const Planet &p) { return (diameter_ < p.diameter_); }
-const bool &Planet::operator>(const Planet &p) { return (diameter_ > p.diameter_); }
+bool Planet::operator==(Planet &p) { return (diameter_ == p.diameter_); }
+bool Planet::operator<(Planet &p) { return (diameter_ < p.diameter_); }
+bool Planet::operator>(Planet &p) { return (diameter_ > p.diameter_); }
 
-std::ofstream &operator<<(std::ofstream &out, Planet *p) {
-    out << p->getName() << "\t" << p->getDiameter() << "\t" << p->getLife() << "\t" << p->getSatellitesNum() << "\n";
+std::ostream &operator<<(std::ostream &out, Planet p) {
+    out << (&p)->getName() << "\t" << (&p)->getDiameter() << "\t" << (&p)->getLife() << "\t" << (&p)->getSatellitesNum() << "\n\r";
     return out;
 }
-std::ifstream &operator>>(std::ifstream &in, Planet *p) {
-    char *name;
-    int diameter, life, satellitesNum;
-    in >> name >> diameter >> life >> satellitesNum;
-    p->setName(name);
-    p->setDiameter(diameter);
-    p->setLife(life);
-    p->setSatellitesNum(satellitesNum);
+std::ofstream &operator<<(std::ofstream &out, Planet p) {
+    out << (&p)->getName() << "\t" << (&p)->getDiameter() << "\t" << (&p)->getLife() << "\t" << (&p)->getSatellitesNum() << "\n\r";
+    return out;
+}
+std::ifstream &operator>>(std::ifstream &in, Planet p) {
+    char buf[50];
+    while (in.getline(buf, 50) || !in.eof()) {
+        std::cout << buf << std::endl;
+        // get from buf
+        char *name = new char[20];
+        int diameter, life, satellitesNum;
+        sscanf(buf, "%s %d %d %d", name, &diameter, &life, &satellitesNum);
+        p.setName(name);
+        p.setDiameter(diameter);
+        p.setLife(life);
+        p.setSatellitesNum(satellitesNum);
+
+        in.clear();
+    }
+    // cha r *name;
+    // int diameter, life, satellitesNum;
+    // in >> name >> diameter >> life >> satellitesNum;
+    // (&p)->setName(name);
+    // (&p)->setDiameter(diameter);
+    // (&p)->setLife(life);
+    // (&p)->setSatellitesNum(satellitesNum);
     return in;
 }
 
-int read_db(char *dbFileName, planet::Planet *planets, const int) {
-    std::ifstream fin(dbFileName);
+int read_db(char *dbFileName, planet::Planet *planets, const int size) {
+    std::ifstream fin(dbFileName, std::ios::in);
+    if (!fin) {
+        std::cout << "Неудача при открытии файла " << dbFileName << std::endl;
+        return -1;
+    }
+
     int n_planet = 0;
-    while (!fin.eof()) {
-        fin >> planets[n_planet];
+    while (!fin.eof() && n_planet < size) {
+        Planet *newPlanets = new Planet[n_planet + 1];
+        if (n_planet > 0) {
+            for (int i = 0; i < n_planet; i++) {
+                std::cout << "i = " << i << std::endl;
+                newPlanets[i] = planets[i];
+            }
+        }
+        delete[] planets;
+        planets = newPlanets;
+
+        std::cout << "n_planet = " << n_planet << std::endl;
+        Planet p = Planet();
+        std::cout << "n_planet = " << n_planet << std::endl;
+        fin >> p;
         n_planet++;
     }
+
     fin.close();
     return n_planet;
+}
+
+int menu() {
+    std::cout << " ============== ГЛАВНОЕ МЕНЮ ========================" << std::endl;
+    std::cout << "l - вывод базы из файла\t\t 4 - вывод базы на экран" << std::endl;
+    std::cout << "2 - вывод базы в файл\t\t 5 - сортировка базы" << std::endl;
+    std::cout << "3 - поиск планеты\t\t 6 - выход" << std::endl;
+    std::cout << "Для выбора операции введите цифру от 1 до 6" << std::endl;
+    int resp;
+    std::cin >> resp;
+    std::cin.clear();
+    std::cin.ignore(10, '\n');
+    return resp;
 };
 
-int menu();
+void print_db(planet::Planet *planets, int n_planet) {
+    std::cout << "Планеты:" << std::endl;
+    std::cout << "Название\tДиаметр\tЖивет\tКол-во сателитов" << std::endl;
+    for (int i = 0; i < n_planet; i++)
+        std::cout << planets[i];
+    std::cout << std::endl;
 
-void print_db(planet::Planet *, int);
+};
 
-int write_db(char *, planet::Planet *, int) {
+int write_db(char *dbFileName, planet::Planet *planets, int n_planet) {
     std::ofstream fout(dbFileName);
-    for (int i = 0; i < n_planet; i++) {
-        fout << planets[i].name << "\t" << planets[i].diameter << "\t"
-             << planets[i].life << "\t" << planets[i].satellitesNum << std::endl;
+    if (!fout) {
+        std::cout << "Неудача при открытии файла " << dbFileName << std::endl;
+        return -1;
     }
+    for (int i = 0; i < n_planet; i++)
+        fout << planets[i];
     fout.close();
+    return 0;
+}
+
+int find(planet::Planet *, int) {
     return 0;
 };
 
-int find(planet::Planet *, int);
-
-void sort_db(planet::Planet *, int);
+void sort_db(planet::Planet *planets, int n_planet) {
+    for (int i = 0; i < n_planet - 1; i++)
+        for (int j = i + 1; j < n_planet; j++)
+            if (planets[i] > planets[j])
+                std::swap(planets[i], planets[j]);
+}
 
 const int Size = 12;
 const int l_record = 80;
 
 int main() {
-    char *file_name = "sunsys.txt";
-    planet::Planet planets[Size];
+    char file_name[] = "sunsys.txt";
+    Planet *planets = new Planet[Size];
     int n_planet;
     int ind;
     while (true) {
         switch (menu()) {
             case 1:
                 n_planet = read_db(file_name, planets, Size);
+                if (n_planet < 0)
+                    return 1;
+                std::cout << "Чтение базы данных завершено" << std::endl;
                 break;
             case 2:
-                write_db(file_name, planets, n_planet);
+                if (write_db(file_name, planets, n_planet) < 0) {
+                    return 1;
+                }
                 break;
             case 3:
                 if ((ind = find(planets, n_planet)) >= 0)

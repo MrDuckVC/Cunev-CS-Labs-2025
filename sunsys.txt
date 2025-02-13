@@ -1,4 +1,4 @@
-Mercury\t4878	0	0
+Mercury	4878	0	0
 Venus	12104	0	0
 Earth	12774	1	1
 Mars	6786	1	2

@@ -21,11 +21,9 @@ public:
     int getSatellitesNum();
     void setSatellitesNum(int newSatellitesNum);
 
-    const bool &operator==(const Planet &p);
-    const bool &operator<(const Planet &p);
-    const bool &operator>(const Planet &p);
-    // std::ofstream &operator<<(std::ofstream &out, const Planet &p);
-    // Planet &operator>>(const Planet &p);
+    bool operator==(Planet &);
+    bool operator<(Planet &);
+    bool operator>(Planet &);
 
 private:
     char *name_;
@@ -33,6 +31,8 @@ private:
     bool life_;
     int satellitesNum_;
 };
+
+int main();
 }
 
 #endif // PLANET_H
