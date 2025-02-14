@@ -49,46 +49,35 @@ std::ifstream &operator>>(std::ifstream &in, Planet p) {
 }
 
 int read_db(char *dbFileName, planet::Planet *planets, const int size) {
-    // std::ifstream fin(dbFileName, std::ios::in);
-    // fin.seekg(0, std::ios::beg);
-    // if (!fin) {
-    //     std::cout << "Неудача при открытии файла " << dbFileName << std::endl;
-    //     return 1;
-    // }
-    // int n_planet = 9;
-    // Planet *newPlanets = new Planet[n_planet];
-    // for (int i = 0; i < size; i++) {
-    //     char *name = new char[20];
-    //     int diameter, life, satellitesNum;
-    //     fin >> name >> diameter >> life >> satellitesNum >> std::ws;
-    //     newPlanets[i].setName(name);
-    //     newPlanets[i].setDiameter(diameter);
-    //     newPlanets[i].setLife(life);
-    //     newPlanets[i].setSatellitesNum(satellitesNum);
-    //     // fin >> newPlanets[i];
-    //     if (fin.eof()) {
-    //         n_planet = i;
-    //         break;
-    //     }
-    //     delete[] name;
-    // }
+    std::ifstream fin(dbFileName, std::ios::in);
+    fin.seekg(0, std::ios::beg);
+    if (!fin) {
+        std::cout << "Неудача при открытии файла " << dbFileName << std::endl;
+        return 1;
+    }
+    int n_planet = 9;
+    Planet *newPlanets = new Planet[n_planet];
+    for (int i = 0; i < size; i++) {
+        char *name = new char[20];
+        int diameter, life, satellitesNum;
+        fin >> name >> diameter >> life >> satellitesNum >> std::ws;
+        newPlanets[i].setName(name);
+        newPlanets[i].setDiameter(diameter);
+        newPlanets[i].setLife(life);
+        newPlanets[i].setSatellitesNum(satellitesNum);
+        // fin >> newPlanets[i];
+        if (fin.eof()) {
+            n_planet = i;
+            break;
+        }
+        delete[] name;
+    }
 
-    // delete[] planets;
-    // planets = newPlanets;
+    delete[] planets;
+    planets = newPlanets;
 
-    // fin.close();
-    // return n_planet;
-    char *name = new char[20];
-    std::strcpy(name, "Mercury");
-    planets[0].setName(name);
-    planets[0].setDiameter(4878);
-    planets[0].setLife(false);
-    planets[0].setSatellitesNum(0);
-    planets[1].setName(name);
-    planets[1].setDiameter(12104);
-    planets[1].setLife(false);
-    planets[1].setSatellitesNum(0);
-    return 2;
+    fin.close();
+    return n_planet;
 }
 
 int menu() {
