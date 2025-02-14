@@ -33,12 +33,12 @@ std::ofstream &operator<<(std::ofstream &out, Planet p) {
     return out;
 }
 std::ifstream &operator>>(std::ifstream &in, Planet p) {
-    char buf[128];
-    in.getline(buf, 128);
+    // char buf[128];
+    // in.getline(buf, 128);
     char *name = new char[20];
     int diameter, life, satellitesNum;
-    sscanf(buf, "%s\t%d\t%d\t%d\n", name, &diameter, &life, &satellitesNum);
-    // in >> name >> diameter >> life >> satellitesNum >> std::ws;
+    // sscanf(buf, "%s\t%d\t%d\t%d\n", name, &diameter, &life, &satellitesNum);
+    in >> name >> diameter >> life >> satellitesNum >> std::ws;
     p.setName(name);
     p.setDiameter(diameter);
     p.setLife(life);
@@ -49,30 +49,46 @@ std::ifstream &operator>>(std::ifstream &in, Planet p) {
 }
 
 int read_db(char *dbFileName, planet::Planet *planets, const int size) {
-    std::ifstream fin(dbFileName, std::ios::in);
-    if (!fin) {
-        std::cout << "Неудача при открытии файла " << dbFileName << std::endl;
-        return -1;
-    }
+    // std::ifstream fin(dbFileName, std::ios::in);
+    // fin.seekg(0, std::ios::beg);
+    // if (!fin) {
+    //     std::cout << "Неудача при открытии файла " << dbFileName << std::endl;
+    //     return 1;
+    // }
+    // int n_planet = 9;
+    // Planet *newPlanets = new Planet[n_planet];
+    // for (int i = 0; i < size; i++) {
+    //     char *name = new char[20];
+    //     int diameter, life, satellitesNum;
+    //     fin >> name >> diameter >> life >> satellitesNum >> std::ws;
+    //     newPlanets[i].setName(name);
+    //     newPlanets[i].setDiameter(diameter);
+    //     newPlanets[i].setLife(life);
+    //     newPlanets[i].setSatellitesNum(satellitesNum);
+    //     // fin >> newPlanets[i];
+    //     if (fin.eof()) {
+    //         n_planet = i;
+    //         break;
+    //     }
+    //     delete[] name;
+    // }
 
-    int n_planet = 0;
-    Planet inputPlanets[size];
-    while (!fin.eof() && n_planet < size) {
-        fin >> inputPlanets[n_planet];
-        std::cout << inputPlanets[n_planet].getName() << std::endl;
-        n_planet++;
-    }
+    // delete[] planets;
+    // planets = newPlanets;
 
-    Planet *newPlanets = new Planet[n_planet + 1];
-    for (int i = 0; i < n_planet; i++) {
-        newPlanets[i] = inputPlanets[i];
-    }
-
-    delete[] planets;
-    planets = newPlanets;
-
-    fin.close();
-    return n_planet;
+    // fin.close();
+    // return n_planet;
+    char *name = new char[20];
+    std::strcpy(name, "Mercury");
+    planets[0].setName(name);
+    planets[0].setDiameter(4878);
+    planets[0].setLife(false);
+    planets[0].setSatellitesNum(0);
+    planets[1].setName(name);
+    planets[1].setDiameter(12104);
+    planets[1].setLife(false);
+    planets[1].setSatellitesNum(0);
+    return 2;
 }
 
 int menu() {
@@ -125,20 +141,20 @@ const int Size = 12;
 const int l_record = 80;
 
 int main() {
-    char file_name[] = "sunsys.txt";
+    char fileName[] = "sunsys.txt";
     Planet *planets = new Planet[Size];
     int n_planet;
     int ind;
     while (true) {
         switch (menu()) {
             case 1:
-                n_planet = read_db(file_name, planets, Size);
+                n_planet = read_db(fileName, planets, Size);
                 if (n_planet < 0)
                     return 1;
                 std::cout << "Чтение базы данных завершено" << std::endl;
                 break;
             case 2:
-                if (write_db(file_name, planets, n_planet) < 0) {
+                if (write_db(fileName, planets, n_planet) < 0) {
                     return 1;
                 }
                 break;
