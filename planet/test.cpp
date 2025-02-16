@@ -1,32 +1,52 @@
 // overload.cpp  -  запись  структур в  файл перегруженной
 // операцией <<
 #include <iostream>
-#include <fstream>
 
 using namespace std;
-struct element { // Определение некоторой структуры
-    int nk, nl;
-    float zn;
+
+class gamma {
+private:
+    static int total; //всего объектов
+    //(только объявление)
+    int id;  //ID текущего объекта
+public:
+    gamma() //конструктор без аргументов
+    {
+        total++; //увеличить счетчик объектов
+        id = total; //id равен текущему значению total
+        cout << "Создание ID " << id << endl;
+    }
+
+    ~gamma() //деструктор
+    {
+        total--;
+        cout << "Удаление ID " << id << endl;
+    }
+
+    static void showtotal() // статическая функция
+    {
+        cout << "\nBcero: " << total << endl;
+    }
+
+    void showID() // нестатическая функция
+    {
+        cout << "\nID: " << id << endl;
+    }
 };
 
-//  Операция-функция,   расширяющая действие операции <<
-ofstream &operator<<(ofstream &out, element el) {
-    out << ' ' << el.nk << ' ' << el.nl << ' ' << el.zn << '\n';
-    return out;
-}
+//---------------------------------
+int gamma::total = 0;
 
 int main() {
-    const int numbeEl = 5; // Количество структур в массиве
-    element arel[numbeEl] = {1, 2, 3.45, 2, 3, 4.56,
-                             22, 11, 45.6, 3, 24, 4.33, 3, 6, -5.3};
-    // Определяем поток и связываем его с новым файлом abc:
-    ofstream filel("abc.txt", ios::app);
-    if (!filel) {
-        cout << "Неудача при открытии файла abc.\n";
-        return 1;
-    }
-    // Запись в файл abc массива структур:
-    for (int i = 0; i < numbeEl; i++)
-        filel << arel[i];
+    gamma::showtotal();
+    gamma g1;
+    g1.showtotal();
+    gamma g2;
+    gamma g3;
+    g3.showtotal();
+    g1.showID();
+    g2.showID();
+    g3.showID();
+    cout << "Конец программы" << endl;
     return 0;
 }

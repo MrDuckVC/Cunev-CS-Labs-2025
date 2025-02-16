@@ -6,12 +6,10 @@
 
 namespace planet {
 class Planet {
- public:
+public:
     Planet(int nameLength = 20);
     ~Planet();
-
     void edit();
-
     char* getName();
     void setName(char* newName);
     int getDiameter();
@@ -21,11 +19,17 @@ class Planet {
     int getSatellitesNum();
     void setSatellitesNum(int newSatellitesNum);
 
+    static int getTotal();
+    int getID();
+
     bool operator==(Planet&);
     bool operator<(Planet&);
     bool operator>(Planet&);
+    Planet& operator=(const Planet& other);
 
- private:
+private:
+    static int total;
+    int id_;
     char* name_;
     int diameter_;
     bool life_;

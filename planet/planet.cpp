@@ -4,11 +4,17 @@
 
 namespace planet {
 
+int Planet::total = 0;
+
 Planet::Planet(int nameLength) {
     name_ = new char[nameLength];
+    name_[0] = '\0';
+    total++;
+    id_ = total;
 }
 Planet::~Planet() {
     delete[] name_;
+    total--;
 }
 
 void Planet::setName(char* newName) {
@@ -37,6 +43,12 @@ int Planet::getDiameter() {
 int Planet::getSatellitesNum() {
     return satellitesNum_;
 }
+int Planet::getTotal() {
+    return total;
+}
+int Planet::getID() {
+    return id_;
+}
 void Planet::edit() {
 }
 
@@ -48,6 +60,19 @@ bool Planet::operator<(Planet& p) {
 }
 bool Planet::operator>(Planet& p) {
     return (diameter_ > p.diameter_);
+}
+Planet& Planet::operator=(const Planet& other) {
+    if (this != &other) {
+        id_ = other.id_;
+        diameter_ = other.diameter_;
+        life_ = other.life_;
+        satellitesNum_ = other.satellitesNum_;
+
+        delete[] name_;
+        name_ = new char[strlen(other.name_) + 1];
+        strcpy(name_, other.name_);
+    }
+    return *this;
 }
 
 std::ofstream& operator<<(std::ofstream& out, Planet& p) {
@@ -94,11 +119,12 @@ int read_db(char* dbFileName, planet::Planet*& planets, const int size) {
 }
 
 int menu() {
-    std::cout << " ============== ГЛАВНОЕ МЕНЮ ========================" << std::endl;
-    std::cout << "l - вывод базы из файла\t\t 4 - вывод базы на экран" << std::endl;
-    std::cout << "2 - вывод базы в файл\t\t 5 - сортировка базы" << std::endl;
-    std::cout << "3 - поиск планеты\t\t 6 - выход" << std::endl;
-    std::cout << "Для выбора операции введите цифру от 1 до 6" << std::endl;
+    std::cout << " ===================== ГЛАВНОЕ МЕНЮ =====================" << std::endl;
+    std::cout << "l - чтение БД из файла\t\t 5 - удаление объекта из БД" << std::endl;
+    std::cout << "2 - запись БД в файл\t\t 6 - редактирование БД" << std::endl;
+    std::cout << "3 - сортировка БД\t\t 7 - вывод БД на экран" << std::endl;
+    std::cout << "4 - добавление нового в БД\t 8 - выход" << std::endl;
+    std::cout << "Для выбора операции введите цифру от 1 до 8" << std::endl;
     int resp;
     std::cin >> resp;
     std::cin.clear();
@@ -113,10 +139,10 @@ void print_db(planet::Planet* planets, int n_planet) {
     }
 
     std::cout << "Планеты:" << std::endl;
-    std::cout << "Название\tДиаметр\t\tЖивет\tКол-во сателитов" << std::endl;
+    std::cout << "ID\tНазвание\tДиаметр\t\tЖивет\tКол-во сателитов" << std::endl;
     for (int i = 0; i < n_planet; i++) {
-        std::cout << planets[i].getName() << "\t\t" << planets[i].getDiameter() << "\t\t" << planets[i].getLife() << "\t"
-                  << planets[i].getSatellitesNum() << std::endl;
+        std::cout << planets[i].getID() << "\t" << planets[i].getName() << "\t\t" << planets[i].getDiameter() << "\t\t" << planets[i].getLife()
+                  << "\t" << planets[i].getSatellitesNum() << std::endl;
     }
     std::cout << std::endl;
 };
@@ -141,7 +167,7 @@ int find(planet::Planet* planets, int) {
     return 0;
 };
 
-void add(planet::Planet*& planets, int& n_planet) {
+void add(Planet*& planets, int& n_planet) {
     std::cout << "Введите данные о планете" << std::endl;
     std::cout << "Название: ";
     char* name = new char[20];
@@ -157,23 +183,57 @@ void add(planet::Planet*& planets, int& n_planet) {
     std::cin >> satellitesNum;
 
     Planet* newPlanets = new Planet[n_planet + 1];
+
     for (int i = 0; i < n_planet; i++) {
         newPlanets[i] = planets[i];
     }
 
-    newPlanets[n_planet] = Planet();
     newPlanets[n_planet].setName(name);
     newPlanets[n_planet].setDiameter(diameter);
     newPlanets[n_planet].setLife(life);
     newPlanets[n_planet].setSatellitesNum(satellitesNum);
 
     delete[] planets;
+
     planets = newPlanets;
+
     n_planet++;
+
     delete[] name;
 }
 
-void del(planet::Planet*& planets, int& n_planet) {
+void del(Planet*& planets, int& n_planet) {
+    if (n_planet == 0) {
+        std::cout << "База данных пуста" << std::endl;
+        return;
+    }
+
+    std::cout << "Введите ID удаляемого объекта" << std::endl;
+    int id;
+    std::cin >> id;
+
+    Planet* newPlanets = new Planet[n_planet - 1];
+    int j = 0;
+    bool found = false;
+
+    for (int i = 0; i < n_planet; i++) {
+        if (planets[i].getID() == id) {
+            found = true;
+            continue;
+        }
+        newPlanets[j] = planets[i];
+        j++;
+    }
+
+    if (!found) {
+        std::cout << "Объект с ID " << id << " не найден" << std::endl;
+        delete[] newPlanets;
+        return;
+    }
+
+    delete[] planets;
+    planets = newPlanets;
+    n_planet--;
 }
 
 void sort_db(planet::Planet*& planets, int n_planet) {
@@ -211,20 +271,25 @@ int main() {
                 std::cout << "Запись базы данных завершена" << std::endl;
                 break;
             case 3:
+                sort_db(planets, n_planet);
+                break;
+            case 4:
+                add(planets, n_planet);
+                break;
+            case 5:
+                del(planets, n_planet);
+                break;
+            case 6:
                 if ((ind = find(planets, n_planet)) >= 0)
                     planets[ind].edit();
                 else
                     std::cout << "Такой планеты нет" << std::endl;
                 break;
-            case 4:
+            case 7:
                 print_db(planets, n_planet);
                 break;
-            case 5:
-                sort_db(planets, n_planet);
-                break;
-            case 6:
-                add(planets, n_planet);
-                // return 0;
+            case 8:
+                return 0;
             default:
                 std::cout << " Неправильный ввод" << std::endl;
                 break;
