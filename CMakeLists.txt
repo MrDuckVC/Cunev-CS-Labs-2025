@@ -10,12 +10,13 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sunsys.txt ${CMAKE_CURRENT_BINARY_DIR
 set(${project}_SOURCES main.cpp)
 
 add_subdirectory(planet)
+add_subdirectory(magazineArticle)
 
 set(${project}_SOURCE_LIST ${${project}_SOURCES})
 
 add_executable(${project} ${${project}_SOURCE_LIST})
 
-target_link_libraries(${project} planet)
+target_link_libraries(${project} planet magazineArticle)
 
 if(ENABLE_DEBUG)
     target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE -g)

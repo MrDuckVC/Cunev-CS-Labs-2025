@@ -1,0 +1,10 @@
+9
+AboutPython	4878	1	103
+AboutC#	12104	1	1054
+LearnBackend	12774	1	1504
+ForFronedDev	6786	1	124
+DocsForC++	142796	0	4566
+LinuxCommands	120000	1	434
+ForGameDev	51108	0	522
+HowToUseVSCode	49600	1	47
+PythonForNoobs	2280	1	102

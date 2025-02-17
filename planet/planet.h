@@ -6,7 +6,7 @@
 
 namespace planet {
 class Planet {
-public:
+ public:
     Planet(int nameLength);
     ~Planet();
     char* GetName();
@@ -24,7 +24,7 @@ public:
     bool operator>(Planet&);
     Planet& operator=(const Planet& other);
 
-private:
+ private:
     char* name_;
     int diameter_;
     bool life_;
