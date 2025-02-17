@@ -9,15 +9,15 @@ class Planet {
 public:
     Planet(int nameLength);
     ~Planet();
-    char* getName();
-    void setName(char* newName);
-    int getDiameter();
-    void setDiameter(int newDiameter);
-    bool getLife();
-    void setLife(bool newLife);
-    int getSatellitesNum();
-    void setSatellitesNum(int newSatellitesNum);
-    void set(char* name, int diameter, bool life, int satellitesNum);
+    char* GetName();
+    void SetName(char* newName);
+    int GetDiameter();
+    void SetDiameter(int newDiameter);
+    bool GetLife();
+    void SetLife(bool newLife);
+    int GetSatellitesNum();
+    void SetSatellitesNum(int newSatellitesNum);
+    void Set(char* name, int diameter, bool life, int satellitesNum);
 
     bool operator==(Planet&);
     bool operator<(Planet&);

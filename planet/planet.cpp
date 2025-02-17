@@ -12,13 +12,13 @@ const int kPlanetSatellitesLength = 15;
 const char kUnableToOpenFile[] = "Неудача при открытии файла ";
 const char kEmptyDatabase[] = "База данных пуста";
 
-void printPlanetsHeader() {
+void PrintPlanetsHeader() {
     std::cout << std::setw(kPlanetIDLength) << "ID" << std::setw(kPlanetNameLength) << "Name" << std::setw(kPlanetDiameterLength) << "Diameter"
               << std::setw(kPlanetLifeLength) << "Life" << std::setw(kPlanetSatellitesLength) << "Satellites" << std::endl;
 }
-void printPlanets(planet::Planet& p, int id) {
-    std::cout << std::setw(kPlanetIDLength) << id << std::setw(kPlanetNameLength) << p.getName() << std::setw(kPlanetDiameterLength)
-              << p.getDiameter() << std::setw(kPlanetLifeLength) << p.getLife() << std::setw(kPlanetSatellitesLength) << p.getSatellitesNum()
+void PrintPlanets(planet::Planet& p, int id) {
+    std::cout << std::setw(kPlanetIDLength) << id << std::setw(kPlanetNameLength) << p.GetName() << std::setw(kPlanetDiameterLength)
+              << p.GetDiameter() << std::setw(kPlanetLifeLength) << p.GetLife() << std::setw(kPlanetSatellitesLength) << p.GetSatellitesNum()
               << std::endl;
 };
 }  // namespace
@@ -32,36 +32,36 @@ Planet::~Planet() {
     delete[] name_;
 }
 
-void Planet::setName(char* newName) {
+void Planet::SetName(char* newName) {
     delete[] name_;
     name_ = new char[strlen(newName) + 1];
     strcpy(name_, newName);
 }
-void Planet::setLife(bool newLife) {
+void Planet::SetLife(bool newLife) {
     life_ = newLife;
 }
-void Planet::setDiameter(int newDiameter) {
+void Planet::SetDiameter(int newDiameter) {
     diameter_ = newDiameter;
 }
-void Planet::setSatellitesNum(int newSatellitesNum) {
+void Planet::SetSatellitesNum(int newSatellitesNum) {
     satellitesNum_ = newSatellitesNum;
 }
-void Planet::set(char* name, int diameter, bool life, int satellitesNum) {
-    setName(name);
-    setDiameter(diameter);
-    setLife(life);
-    setSatellitesNum(satellitesNum);
+void Planet::Set(char* name, int diameter, bool life, int satellitesNum) {
+    SetName(name);
+    SetDiameter(diameter);
+    SetLife(life);
+    SetSatellitesNum(satellitesNum);
 }
-char* Planet::getName() {
+char* Planet::GetName() {
     return name_;
 }
-bool Planet::getLife() {
+bool Planet::GetLife() {
     return life_;
 }
-int Planet::getDiameter() {
+int Planet::GetDiameter() {
     return diameter_;
 }
-int Planet::getSatellitesNum() {
+int Planet::GetSatellitesNum() {
     return satellitesNum_;
 }
 
@@ -87,42 +87,20 @@ Planet& Planet::operator=(const Planet& other) {
     return *this;
 }
 std::ofstream& operator<<(std::ofstream& out, Planet& p) {
-    out << p.getName() << "\t" << p.getDiameter() << "\t" << p.getLife() << "\t" << p.getSatellitesNum();
+    out << p.GetName() << "\t" << p.GetDiameter() << "\t" << p.GetLife() << "\t" << p.GetSatellitesNum();
     return out;
 }
 std::ifstream& operator>>(std::ifstream& in, Planet& p) {
     char* name = new char[kPlanetNameLength];
     int diameter, life, satellitesNum;
     in >> name >> diameter >> life >> satellitesNum >> std::ws;
-    p.set(name, diameter, life, satellitesNum);
+    p.Set(name, diameter, life, satellitesNum);
 
     delete[] name;
     return in;
 }
 
-int read_db(char* dbFileName, planet::Planet*& planets) {
-    std::ifstream fin(dbFileName, std::ios::in);
-    fin.seekg(0, std::ios::beg);
-    if (!fin) {
-        std::cout << kUnableToOpenFile << dbFileName << std::endl;
-        return -1;
-    }
-
-    int n_planet = 0;
-    fin >> n_planet;
-
-    Planet* newPlanets = new Planet[n_planet];
-    delete[] planets;
-    planets = newPlanets;
-    for (int i = 0; i < n_planet; i++) {
-        fin >> planets[i];
-    }
-
-    fin.close();
-    return n_planet;
-}
-
-int menu() {
+int Menu() {
     std::cout << "Main menu:" << std::endl;
     std::cout << "l - read from DB" << std::endl;
     std::cout << "2 - write to DB" << std::endl;
@@ -141,117 +119,47 @@ int menu() {
     return resp;
 };
 
-void print_db(planet::Planet* planets, int n_planet) {
-    if (n_planet == 0) {
-        std::cout << kEmptyDatabase << std::endl;
-        return;
+int ReadDB(char* dbFileName, planet::Planet*& planets) {
+    std::ifstream fin(dbFileName, std::ios::in);
+    fin.seekg(0, std::ios::beg);
+    if (!fin) {
+        std::cout << kUnableToOpenFile << dbFileName << std::endl;
+        return -1;
     }
 
-    std::cout << "Planets:" << std::endl;
-    printPlanetsHeader();
-    for (int i = 0; i < n_planet; i++) {
-        printPlanets(planets[i], i);
-    }
-};
+    int planetsAmount = 0;
+    fin >> planetsAmount;
 
-int write_db(char* dbFileName, planet::Planet* planets, int n_planet) {
+    Planet* newPlanets = new Planet[planetsAmount];
+    delete[] planets;
+    planets = newPlanets;
+    for (int i = 0; i < planetsAmount; i++) {
+        fin >> planets[i];
+    }
+
+    fin.close();
+    return planetsAmount;
+}
+
+int WriteDB(char* dbFileName, planet::Planet* planets, int planetsAmount) {
     std::ofstream fout(dbFileName, std::ios::out);
     if (!fout) {
         std::cout << kUnableToOpenFile << dbFileName << std::endl;
         return -1;
     }
 
-    fout << static_cast<int>(n_planet) << std::endl;
+    fout << static_cast<int>(planetsAmount) << std::endl;
 
-    for (int i = 0; i < n_planet; i++)
+    for (int i = 0; i < planetsAmount; i++)
         fout << planets[i] << std::endl;
     fout.close();
 
     return 0;
 }
 
-void add(Planet*& planets, int& n_planet) {
-    char* name = new char[kPlanetNameLength];
-    int diameter;
-    bool life;
-    int satellitesNum;
-    std::cout << "Enter planet data devided by spaces: name diameter life(1 - yes, 0 - no) satellitesNum" << std::endl;
-    std::cin >> name >> diameter >> life >> satellitesNum;
-
-    Planet* newPlanets = new Planet[n_planet + 1];
-
-    for (int i = 0; i < n_planet; i++) {
-        newPlanets[i] = planets[i];
-    }
-
-    newPlanets[n_planet].set(name, diameter, life, satellitesNum);
-
-    delete[] planets;
-    planets = newPlanets;
-
-    n_planet++;
-    delete[] name;
-}
-
-void edit(Planet*& planets, int n_planet) {
-    if (n_planet == 0) {
-        std::cout << kEmptyDatabase << std::endl;
-        return;
-    }
-
-    std::cout << "Enter planet ID to edit: ";
-    int id = 0;
-    std::cin >> id;
-
-    if (id < 0 || id >= n_planet) {
-        std::cout << "Object " << id << " not found" << std::endl;
-        return;
-    }
-
-    std::cout << "Enter planet data devided by spaces: name diameter life(1 - yes, 0 - no) satellitesNum" << std::endl;
-    char* name = new char[kPlanetNameLength];
-    int diameter;
-    bool life;
-    int satellitesNum;
-    std::cin >> name >> diameter >> life >> satellitesNum;
-    planets[id].set(name, diameter, life, satellitesNum);
-    delete[] name;
-};
-
-void remove(Planet*& planets, int& n_planet) {
-    if (n_planet == 0) {
-        std::cout << kEmptyDatabase << std::endl;
-        return;
-    }
-
-    std::cout << "Enter planet ID to delete: ";
-    int id = 0;
-    std::cin >> id;
-
-    if (id < 0 || id >= n_planet) {
-        std::cout << "Object " << id << " not found" << std::endl;
-        return;
-    }
-
-    Planet* newPlanets = new Planet[n_planet - 1];
-    int j = 0;
-
-    for (int i = 0; i < n_planet; i++) {
-        if (id == i) {
-            continue;
-        }
-        newPlanets[j] = planets[i];
-        j++;
-    }
-
-    delete[] planets;
-    planets = newPlanets;
-    n_planet--;
-}
-
-void sort_db(planet::Planet*& planets, int n_planet) {
-    for (int i = 0; i < n_planet - 1; ++i) {
-        for (int j = 0; j < n_planet - i - 1; ++j) {
+void SortDB(planet::Planet*& planets, int planetsAmount) {
+    for (int i = 0; i < planetsAmount - 1; ++i) {
+        for (int j = 0; j < planetsAmount - i - 1; ++j) {
             if (planets[j] < planets[j + 1]) {
                 Planet* temp = new Planet;
                 *temp = planets[j];
@@ -262,43 +170,135 @@ void sort_db(planet::Planet*& planets, int n_planet) {
     }
 }
 
+void AddObj(Planet*& planets, int& planetsAmount) {
+    char* name = new char[kPlanetNameLength];
+    int diameter;
+    bool life;
+    int satellitesNum;
+    std::cout << "Enter planet data devided by spaces: name diameter life(1 - yes, 0 - no) satellitesNum" << std::endl;
+    std::cin >> name >> diameter >> life >> satellitesNum;
+
+    Planet* newPlanets = new Planet[planetsAmount + 1];
+
+    for (int i = 0; i < planetsAmount; i++) {
+        newPlanets[i] = planets[i];
+    }
+
+    newPlanets[planetsAmount].Set(name, diameter, life, satellitesNum);
+
+    delete[] planets;
+    planets = newPlanets;
+
+    planetsAmount++;
+    delete[] name;
+}
+
+void RemoveObj(Planet*& planets, int& planetsAmount) {
+    if (planetsAmount == 0) {
+        std::cout << kEmptyDatabase << std::endl;
+        return;
+    }
+
+    std::cout << "Enter planet ID to delete: ";
+    int id = 0;
+    std::cin >> id;
+
+    if (id < 0 || id >= planetsAmount) {
+        std::cout << "Object " << id << " not found" << std::endl;
+        return;
+    }
+
+    Planet* newPlanets = new Planet[planetsAmount - 1];
+    int j = 0;
+
+    for (int i = 0; i < planetsAmount; i++) {
+        if (id == i) {
+            continue;
+        }
+        newPlanets[j] = planets[i];
+        j++;
+    }
+
+    delete[] planets;
+    planets = newPlanets;
+    planetsAmount--;
+}
+
+void EditObj(Planet*& planets, int planetsAmount) {
+    if (planetsAmount == 0) {
+        std::cout << kEmptyDatabase << std::endl;
+        return;
+    }
+
+    std::cout << "Enter planet ID to edit: ";
+    int id = 0;
+    std::cin >> id;
+
+    if (id < 0 || id >= planetsAmount) {
+        std::cout << "Object " << id << " not found" << std::endl;
+        return;
+    }
+
+    std::cout << "Enter planet data devided by spaces: name diameter life(1 - yes, 0 - no) satellitesNum" << std::endl;
+    char* name = new char[kPlanetNameLength];
+    int diameter;
+    bool life;
+    int satellitesNum;
+    std::cin >> name >> diameter >> life >> satellitesNum;
+    planets[id].Set(name, diameter, life, satellitesNum);
+    delete[] name;
+};
+
+void PrintDB(planet::Planet* planets, int planetsAmount) {
+    if (planetsAmount == 0) {
+        std::cout << kEmptyDatabase << std::endl;
+        return;
+    }
+
+    std::cout << "Planets:" << std::endl;
+    PrintPlanetsHeader();
+    for (int i = 0; i < planetsAmount; i++) {
+        PrintPlanets(planets[i], i);
+    }
+};
+
 int main() {
     char fileName[] = "sunsys.txt";
-    int n_planet = 0;
-    Planet* planets = new Planet[n_planet];
+    int planetsAmount = 0;
+    Planet* planets = new Planet[planetsAmount];
     int ind;
     while (true) {
-        switch (menu()) {
+        switch (Menu()) {
             case 1:
-                n_planet = read_db(fileName, planets);
-                if (n_planet < 0)
+                planetsAmount = ReadDB(fileName, planets);
+                if (planetsAmount < 0)
                     return 1;
                 std::cout << "Reading database completed" << std::endl;
                 break;
             case 2:
-                if (write_db(fileName, planets, n_planet) < 0) {
+                if (WriteDB(fileName, planets, planetsAmount) < 0) {
                     return 1;
                 }
                 std::cout << "Writing database completed" << std::endl;
                 break;
             case 3:
-                sort_db(planets, n_planet);
+                SortDB(planets, planetsAmount);
                 std::cout << "Sorting database completed" << std::endl;
                 break;
             case 4:
-                add(planets, n_planet);
+                AddObj(planets, planetsAmount);
                 std::cout << "Adding object completed" << std::endl;
                 break;
             case 5:
-                remove(planets, n_planet);
+                RemoveObj(planets, planetsAmount);
                 std::cout << "Deleting object completed" << std::endl;
                 break;
             case 6:
-                edit(planets, n_planet);
+                EditObj(planets, planetsAmount);
                 std::cout << "Поиск завершен" << std::endl;
                 break;
             case 7:
-                print_db(planets, n_planet);
+                PrintDB(planets, planetsAmount);
                 std::cout << "Printing database completed" << std::endl;
                 break;
             case 8:
