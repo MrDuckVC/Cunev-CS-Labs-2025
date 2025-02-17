@@ -7,9 +7,8 @@
 namespace planet {
 class Planet {
 public:
-    Planet(int nameLength = 20);
+    Planet(int nameLength);
     ~Planet();
-    void edit();
     char* getName();
     void setName(char* newName);
     int getDiameter();
@@ -18,9 +17,7 @@ public:
     void setLife(bool newLife);
     int getSatellitesNum();
     void setSatellitesNum(int newSatellitesNum);
-
-    static int getTotal();
-    int getID();
+    void set(char* name, int diameter, bool life, int satellitesNum);
 
     bool operator==(Planet&);
     bool operator<(Planet&);
@@ -28,8 +25,6 @@ public:
     Planet& operator=(const Planet& other);
 
 private:
-    static int total;
-    int id_;
     char* name_;
     int diameter_;
     bool life_;
