@@ -1,6 +1,10 @@
 #include <cstring>
 #include <iostream>
 
+int RunInteractive() { return 0; }
+
+int RunDemo() { return 0; }
+
 int main(int argc, char* argv[]) {
     setlocale(LC_ALL, "Russian");
 
@@ -11,8 +15,8 @@ int main(int argc, char* argv[]) {
     }
 
     if (isInteractive) {
-        return 0;
+        return RunInteractive();
     } else {
-        return 0;
+        return RunDemo();
     }
 }
