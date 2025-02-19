@@ -55,7 +55,10 @@ Fraction::Fraction(char* str) {
         int wholePart = std::stoi(str);
         numerator_ = std::stoi(str + spaceIndex + 1);
         denominator_ = std::stoi(str + slashIndex + 1);
-        numerator_ += wholePart * denominator_; // TODO when '-5 1/4' we get '-19/4', it should be '-21/4'
+        if (wholePart < 0) {
+            numerator_ *= -1;
+        }
+        numerator_ += wholePart * denominator_;
     }
 
     if (denominator_ == 0) {
@@ -91,36 +94,26 @@ Fraction Fraction::operator+(const Fraction& other) {
     int newNumerator = numerator_ * other.denominator_ + other.numerator_ * denominator_;
     return Fraction(newNumerator, newDenominator);
 }
-Fraction Fraction::operator+(double value) {
-    return *this + Fraction(value);
-}
 Fraction& Fraction::operator+=(const Fraction& other) {
     *this = *this + other;
     return *this;
 }
-Fraction& Fraction::operator+=(double value) {
-    *this = *this + value;
-    return *this;
-}
 
 Fraction operator+(double value, const Fraction& fraction) {
-    int newDenominator = fraction.denominator_;
-    int newNumerator = value * newDenominator + fraction.numerator_;
-    return Fraction(newNumerator, newDenominator);
+    return Fraction(value) + fraction;
 }
 Fraction operator+=(double value, const Fraction& fraction) {
-    return value + fraction;
+    return Fraction(value) += fraction;
 }
 
 std::ostream& operator<<(std::ostream& os, const Fraction& fraction) {
     if (fraction.numerator_ % fraction.denominator_ == 0) {
         return os << fraction.numerator_ / fraction.denominator_;
     }
-    int gcd = std::gcd(fraction.numerator_, fraction.denominator_);
-    if (gcd != 1) {
-        os << fraction.numerator_ / gcd << '/' << fraction.denominator_ / gcd;
+    if (std::abs(fraction.numerator_) > std::abs(fraction.denominator_)) {
+        return os << fraction.numerator_ / fraction.denominator_ << " " << std::abs(fraction.numerator_ % fraction.denominator_) << "/" << fraction.denominator_;
     } else {
-        os << fraction.numerator_ << '/' << fraction.denominator_;
+        return os << fraction.numerator_ << "/" << fraction.denominator_;
     }
     return os;
 }

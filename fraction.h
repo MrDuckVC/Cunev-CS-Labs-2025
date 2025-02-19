@@ -20,9 +20,7 @@ class Fraction {
     void SetNDEC(int);
 
     Fraction operator+(const Fraction&);
-    Fraction operator+(double);
     Fraction& operator+=(const Fraction&);
-    Fraction& operator+=(double);
 
     friend Fraction operator+(double, const Fraction&);
     friend Fraction operator+=(double, const Fraction&);
