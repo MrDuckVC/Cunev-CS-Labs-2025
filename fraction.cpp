@@ -1,20 +1,33 @@
 #include "fraction.h"
-#include <iostream>
-#include <numeric>
-#include <cstring>
 #include <cmath>
+#include <cstring>
+#include <iostream>
 
 namespace {
 void ThrowDenominatorIsZero() {
     throw std::invalid_argument("Denominator can't be zero.");
 }
+
+int FindGCD(int a, int b) {
+    if (a == 0)
+        return b;
+    if (b == 0)
+        return a;
+
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
 }
+}  // namespace
 
 namespace fraction {
 int Fraction::N_DEC = 4;
 
 void Fraction::Simplify() {
-    int gcd = std::gcd(numerator_, denominator_);
+    int gcd = FindGCD(numerator_, denominator_);
     numerator_ /= gcd;
     denominator_ /= gcd;
 }
@@ -23,7 +36,7 @@ Fraction::Fraction() {
     numerator_ = 0;
     denominator_ = 1;
 }
-Fraction::Fraction(char* str) {
+Fraction::Fraction(const char* str) {
     numerator_ = 0;
     denominator_ = 1;
 
@@ -111,7 +124,8 @@ std::ostream& operator<<(std::ostream& os, const Fraction& fraction) {
         return os << fraction.numerator_ / fraction.denominator_;
     }
     if (std::abs(fraction.numerator_) > std::abs(fraction.denominator_)) {
-        return os << fraction.numerator_ / fraction.denominator_ << " " << std::abs(fraction.numerator_ % fraction.denominator_) << "/" << fraction.denominator_;
+        return os << fraction.numerator_ / fraction.denominator_ << " " << std::abs(fraction.numerator_ % fraction.denominator_) << "/"
+                  << fraction.denominator_;
     } else {
         return os << fraction.numerator_ << "/" << fraction.denominator_;
     }

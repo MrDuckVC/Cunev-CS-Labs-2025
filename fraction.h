@@ -13,7 +13,7 @@ class Fraction {
 
  public:
     Fraction();
-    Fraction(char*);
+    Fraction(const char*);
     Fraction(int, int);
     Fraction(double);
 
