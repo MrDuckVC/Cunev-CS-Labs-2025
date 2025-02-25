@@ -14,36 +14,34 @@ void Multipliers(int n, MyStack<int>& stack) {
 }
 
 int RunTask() {
+    MyStack<char> TestStack;
+    TestStack.push('A');
+    TestStack.push('B');
+    TestStack.push('C');
+    std::cout << TestStack;
+
     int N = 3960;
     MyStack<int> stack;
 
     Multipliers(N, stack);
+    std::cout << stack;
 
     // Вывод множителей по убыванию
-    std::cout << N << "=";
+    std::cout << N << " = " << stack;
+
     MyStack<int> tempStack;
     while (!stack.empty()) {
         int factor = stack.top_inf();
-        std::cout << factor;
+        // std::cout << factor;
         stack.pop();
         tempStack.push(factor);
         if (!stack.empty()) {
-            std::cout << " * ";
+            // std::cout << " * ";
         }
     }
-    std::cout << std::endl;
 
     // Вывод множителей по возрастанию
-    std::cout << N << "=";
-    while (!tempStack.empty()) {
-        int factor = tempStack.top_inf();
-        std::cout << factor;
-        tempStack.pop();
-        if (!tempStack.empty()) {
-            std::cout << " * ";
-        }
-    }
-    std::cout << std::endl;
+    std::cout << N << " = " << tempStack;
 
     return 0;
 }

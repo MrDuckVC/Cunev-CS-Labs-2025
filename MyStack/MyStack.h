@@ -53,6 +53,19 @@ class MyStack {
         }
         return top->d;
     };  // считать информацию из вершины стека
+    friend std::ostream& operator<<(std::ostream& os, const MyStack<INF>& stack) {
+        ListNode<INF, MyStack<INF>>* p = stack.top;
+        while (p != nullptr) {
+            os << p->d;
+            if (p->next != nullptr) {
+                os << " * ";
+            }
+            p = p->next;
+        }
+        os << std::endl;
+        return os;
+    };
+
 };
 
 int RunTask();
