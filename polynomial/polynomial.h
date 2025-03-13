@@ -20,25 +20,25 @@ class Term {
 };
 
 class Polynomial {
-//  private:
-//     int termsAmount;
-//     Term* poly;
-//     int poly;
-//     Order order;
-//  public:
-//     Polynomial();
-//     Polynomial(int coeff);
-//     Polynomial(Term& t);
+ private:
+    int termsAmount;
+    Term* poly;
+    Order order;
+ public:
+    Polynomial();
+    Polynomial(int coeff);
+    Polynomial(const Term& t);
+    ~Polynomial();
 
-//     Polynomial& operator=(const Polynomial& p);
-//     Polynomial& operator+=(const Polynomial& p);
-//     Polynomial& operator*=(const Polynomial& p);
+    Polynomial& operator=(const Polynomial& p);
+    Polynomial& operator+=(const Polynomial& p);
+    Polynomial& operator*=(const Polynomial& p);
 
-//     friend Polynomial& operator+(const Polynomial& p1, const Polynomial& p2);
-//     friend Polynomial& operator*(const Polynomial& p1, const Polynomial& p2);
+    friend Polynomial& operator+(const Polynomial& p1, const Polynomial& p2);
+    friend Polynomial& operator*(const Polynomial& p1, const Polynomial& p2);
 
-//     friend std::istream& operator>>(std::istream& is, Polynomial& p);
-//     friend std::ostream& operator<<(std::ostream& os, Polynomial& p);
+    friend std::istream& operator>>(std::istream& is, Polynomial& p);
+    friend std::ostream& operator<<(std::ostream& os, Polynomial& p);
 };
 
 #endif
