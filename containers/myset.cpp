@@ -82,5 +82,5 @@
 //     return true;
 // }
 
-template class MySet<int>;
-template class MySet<char*>;
+// template class MySet<int>;
+// template class MySet<char*>;

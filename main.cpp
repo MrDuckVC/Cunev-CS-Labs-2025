@@ -83,30 +83,30 @@ int RunDemo() {
 
 
 
-    // MySet<char*> v2;
-    // char* str4 = new char[strlen("ee1") + 1];
-    // strcpy(str4, "ee1");
-    // char* str5 = new char[strlen("d") + 1];
-    // strcpy(str5, "d");
-    // char* str6 = new char[strlen("eedfg33") + 1];
-    // strcpy(str6, "eedfg33");
-    // char* str7 = new char[strlen("ee444") + 1];
-    // strcpy(str7, "ee443");
+    MySet<char*> v2;
+    char* str4 = new char[strlen("ee1") + 1];
+    strcpy(str4, "ee1");
+    char* str5 = new char[strlen("d") + 1];
+    strcpy(str5, "d");
+    char* str6 = new char[strlen("eedfg33") + 1];
+    strcpy(str6, "eedfg33");
+    char* str7 = new char[strlen("ee444") + 1];
+    strcpy(str7, "ee443");
 
-    // v2.add_element(str4);
-    // v2.add_element(str5);
-    // v2.add_element(str6);
-    // v2.add_element(str7);
+    v2.add_element(str4);
+    v2.add_element(str5);
+    v2.add_element(str6);
+    v2.add_element(str7);
 
-    // std::cout << v2 << std::endl;
-    // delete [] str4;
-    // delete [] str5;
-    // delete [] str6;
-    // delete [] str7;
-    // MySet<char*> v3(v2);
-    // v2.delete_element(str6);
-    // std::cout << v2 << std::endl;
-    // std::cout << v3 << std::endl;
+    std::cout << v2 << std::endl;
+    delete [] str4;
+    delete [] str5;
+    delete [] str6;
+    delete [] str7;
+    MySet<char*> v3(v2);
+    v2.delete_element(str6);
+    std::cout << v2 << std::endl;
+    std::cout << v3 << std::endl;
 
 
     return 0;

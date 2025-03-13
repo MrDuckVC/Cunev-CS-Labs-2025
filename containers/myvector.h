@@ -1,7 +1,7 @@
 #ifndef INHERITANCE_MYVECTOR_H
 #define INHERITANCE_MYVECTOR_H
 
-//#include <algorithm>
+#include <cstring>
 #include <iostream>
 
 const int MAX_SIZE = 5;
@@ -67,12 +67,8 @@ class MyVector {
     int get_size() const { return size; }          // Для возврата количества элементов вектора
     int get_max_size() const { return max_size; }  // Для возврата размера вектора
 
-    T& operator[](int index) {
-        return pdata[index];
-    };  // Для возврата элемента вектора (доступ по индексу)
-    const T& operator[](int index) const {
-        return pdata[index];
-    };
+    T& operator[](int index) { return pdata[index]; };  // Для возврата элемента вектора (доступ по индексу)
+    const T& operator[](int index) const { return pdata[index]; };
     MyVector<T>& operator=(const MyVector<T>& other) {
         if (this != &other) {
             delete[] pdata;
@@ -106,5 +102,62 @@ class MyVector {
         }
     };  // Для сортировки
 };
+
+template <>
+void MyVector<char*>::resize() {
+    if (size >= max_size) {
+        max_size *= 2;
+    } else if (size < max_size / 4) {
+        max_size /= 2;
+    }
+    char** new_data = new char*[max_size];
+    for (int i = 0; i < size; i++) {
+        new_data[i] = new char[strlen(pdata[i]) + 1];
+        strcpy(new_data[i], pdata[i]);
+    }
+    delete[] pdata;
+    pdata = new_data;
+}
+
+template <>
+MyVector<char*>::MyVector(const MyVector& other) {
+    max_size = other.max_size;
+    size = other.size;
+    pdata = new char*[max_size];
+    for (int i = 0; i < size; i++) {
+        pdata[i] = new char[strlen(other.pdata[i]) + 1];
+        strcpy(pdata[i], other.pdata[i]);
+    }
+}  // Конструктор копирования
+
+template <>
+MyVector<char*>::~MyVector() {
+    for (int i = 0; i < size; i++) {
+        delete[] pdata[i];
+    }
+    delete[] pdata;
+}  // Деструктор
+
+template <>
+void MyVector<char*>::add_element(char *const & element) {
+    pdata[size] = new char[strlen(element) + 1];
+    strcpy(pdata[size], element);
+    ++size;
+    resize();
+};  // Вставка элемента в конец вектора
+
+template <>
+bool MyVector<char*>::delete_element(int index) {
+    if (index >= size || index < 0) {
+        return false;
+    }
+    delete[] pdata[index];
+    for (int i = index; i < size - 1; ++i) {
+        pdata[i] = pdata[i + 1];
+    }
+    --size;
+    resize();
+    return true;
+};  // Удаление элемента из произвольного места
 
 #endif  // INHERITANCE_MYVECTOR_H
